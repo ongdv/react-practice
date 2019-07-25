@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import InputContact from "./components/InputContact";
 import ContactList from "./components/ContactList";
@@ -22,7 +21,9 @@ class App extends React.Component {
         name: "chaile",
         tel: "010-2211-1122"
       }
-    ]
+    ],
+    data: [],
+    isUpdateMode: -2
   };
 
   /**
@@ -51,17 +52,50 @@ class App extends React.Component {
     let newContact = this.state.contact.filter(item => {
       return item.idx !== idx;
     });
-    this.setState({ contact: newContact });
+    this.setState({ contact: newContact, data: newContact });
   };
 
+  /**
+   * 수정모드 진입
+   */
+  handleUpdateContactMode = (idx) => {
+    this.setState(prevState=>({isUpdateMode: prevState.isUpdateMode === idx ? -1: idx}))
+  }
+  /**
+   * 값 수정
+   */
+  handleChangeContact = (idx, e) => {
+    const newContact = this.state.contact.slice(0);
+    newContact[idx][e.target.name] = e.target.value
+    this.setState({contact: newContact, data: newContact});
+  }
+  /**
+   * 연락처 필터링
+   */
+  handleKeyword = (str="") => {
+    const newList = this.state.contact.filter(item => {
+      return item.name.includes(str);
+    })
+    this.setState({
+      data: newList
+    })
+  }
+
+  componentWillMount(){
+    this.handleKeyword();
+  }
+
   render() {
-    var { contact } = this.state;
+    const { data, isUpdateMode } = this.state;
     return (
       <div className="App">
-        <InputContact submitContact={this.submitContact} />
+        <InputContact handleKeyword={this.handleKeyword} submitContact={this.submitContact} />
         <ContactList
-          contact={contact}
+          contact={data}
+          isUpdateMode={isUpdateMode}
           handleRemoveContact={this.handleRemoveContact}
+          handleUpdateContactMode={this.handleUpdateContactMode}
+          handleChangeContact={this.handleChangeContact}
         />
       </div>
     );

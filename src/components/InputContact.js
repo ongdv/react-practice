@@ -8,11 +8,14 @@ class InputContact extends Component {
       tel: ""
     };
   }
+
   _handleInputContact = e => {
     this.setState({
       [e.target.name]: e.target.value
     });
+    this.props.handleKeyword(e.target.value);
   };
+
   /**
    * 입력함수
    * params(*)
