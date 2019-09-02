@@ -1,19 +1,18 @@
 import React, { Component, Fragment } from "react";
-
+import Input from './Input';
 class InputContact extends Component {
   constructor(props) {
     super(props);
     this.state = {
       name: "",
-      tel: ""
+      tel: "",
+      title: "",
     };
   }
 
-  _handleInputContact = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
-    this.props.handleKeyword(e.target.value);
+  _handleInputContact = (name, value) => {
+    this.setState({[name]: value});
+    this.props.handleKeyword(value);
   };
 
   /**
@@ -40,26 +39,26 @@ class InputContact extends Component {
     return (
       <Fragment>
         <div>
-          <input
+          <Input
             type="text"
             placeholder="이름"
             name="name"
             value={name}
-            onChange={this._handleInputContact}
+            onChange={(param) =>this._handleInputContact(param.name, param.value)}
           />
         </div>
         <div>
-          <input
+          <Input
             type="text"
             placeholder="전화번호"
             name="tel"
             value={tel}
-            onChange={this._handleInputContact}
+            onChange={(param) =>this._handleInputContact(param.name, param.value)}
             onKeyUp={this._handleSubmitContact}
           />
         </div>
 
-        <button onClick={this._handleSubmitContactHandler}>Insert</button>
+        <button className="btn btn-success" onClick={this._handleSubmitContactHandler}>Insert</button>
       </Fragment>
     );
   }

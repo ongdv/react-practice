@@ -1,7 +1,10 @@
 import React from "react";
 import "./App.css";
-import InputContact from "./components/InputContact";
-import ContactList from "./components/ContactList";
+import {
+  Title,
+  InputContact,
+  ContactList
+} from './components';
 
 class App extends React.Component {
   state = {
@@ -31,9 +34,17 @@ class App extends React.Component {
    * params(*)
    */
   submitContact = (name, tel) => {
-    // const lastIndex = this.state.contact[this.state.contact.length-1].idx+1;
     this.setState({
       contact: [
+        ...this.state.contact,
+        {
+          idx: new Date().getTime(),
+          // idx: lastIndex,
+          name: name,
+          tel: tel
+        }
+      ],
+      data: [
         ...this.state.contact,
         {
           idx: new Date().getTime(),
@@ -58,38 +69,69 @@ class App extends React.Component {
   /**
    * 수정모드 진입
    */
-  handleUpdateContactMode = (idx) => {
-    this.setState(prevState=>({isUpdateMode: prevState.isUpdateMode === idx ? -1: idx}))
-  }
+  handleUpdateContactMode = idx => {
+    this.setState(prevState => ({
+      isUpdateMode: prevState.isUpdateMode === idx ? -1 : idx
+    }));
+  };
   /**
    * 값 수정
    */
   handleChangeContact = (idx, e) => {
     const newContact = this.state.contact.slice(0);
-    newContact[idx][e.target.name] = e.target.value
-    this.setState({contact: newContact, data: newContact});
-  }
+    newContact[idx][e.name] = e.value;
+    this.setState({ contact: newContact, data: newContact });
+  };
   /**
    * 연락처 필터링
    */
   handleKeyword = (str="") => {
-    const newList = this.state.contact.filter(item => {
-      return item.name.includes(str);
-    })
+    var newList = [];
+    if(str === "") {
+      newList = this.state.contact;
+    }else{
+      newList = this.state.contact.filter(item => {
+        return item.name.includes(str);
+      });
+    }
     this.setState({
       data: newList
+    });
+  };
+
+  /**
+   * Title 수정
+   */
+  _handleChangeTitle = (title) => {
+    this.setState({
+      title: title
     })
   }
 
-  componentWillMount(){
+  _handleClickEvent = (str) => {
+    alert(str);
+  }
+
+  componentWillMount() {
     this.handleKeyword();
   }
 
   render() {
-    const { data, isUpdateMode } = this.state;
+    const { data, isUpdateMode, title } = this.state;
     return (
       <div className="App">
-        <InputContact handleKeyword={this.handleKeyword} submitContact={this.submitContact} />
+        <button onClick={() =>this._handleChangeTitle("Home")}>/home</button>
+        <button onClick={() =>this._handleChangeTitle("About")}>/about</button>
+        <button onClick={() =>this._handleChangeTitle("Blog")}>/blog</button>
+        <br/>
+        <Title
+          value={title}
+          onClick={this._handleClickEvent}
+        />
+        <InputContact
+          handleKeyword={this.handleKeyword}
+          submitContact={this.submitContact}
+        />
         <ContactList
           contact={data}
           isUpdateMode={isUpdateMode}
